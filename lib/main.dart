@@ -10,12 +10,20 @@ import 'ui/screens/home_screen.dart';
 import 'ui/screens/player_screen.dart';
 import 'ui/theme/app_theme.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Request permissions on Android
   if (Platform.isAndroid) {
-    await Permission.audio.request();
+    final storageStatus = await Permission.storage.status;
+    if (storageStatus.isDenied || storageStatus.isPermanentlyDenied) {
+      await Permission.storage.request();
+    }
+    
+    final audioStatus = await Permission.audio.status;
+    if (audioStatus.isDenied || audioStatus.isPermanentlyDenied) {
+      await Permission.audio.request();
+    }
   }
   
   runApp(const MusicPlayerApp());
